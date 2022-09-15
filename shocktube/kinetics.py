@@ -1,5 +1,10 @@
+from multiprocessing import Pool
+from itertools import product
+from typing import Iterable
+
 import cantera as ct
 import numpy as np
+import pandas as pd
 
 
 class Simulation:
@@ -97,3 +102,50 @@ class Simulation:
 
         return species[:n]
 
+
+class SimulationPool:
+    def __init__(self, T, P, X, mechanism, n: int = None, **kwargs):
+        self.cases = pd.DataFrame({
+            "T": T,
+            "P": P,
+            "X": X,
+            "mechanism": mechanism
+        })
+
+        with Pool(n) as pool:
+            self.cases["IDT"] = pool.starmap(self._run_case, self)
+
+    def __getitem__(self, item):
+        return self.cases.iloc[item].values
+
+    @staticmethod
+    def _run_case(T: float, P: float, X, mechanism: str, **kwargs):
+        gas = ct.Solution(mechanism)
+        sim = Simulation(gas, T, P, X)
+        return sim.ignition_delay_time(**kwargs)
+
+    @classmethod
+    def parameter_study(
+            cls,
+            T: float | Iterable[float],
+            P: float | Iterable[float],
+            X: str | dict[str, float] | list[str | dict[str, float]],
+            mechanism: str | list[str],
+            *args,
+            **kwargs
+    ):
+        if isinstance(T, float):
+            T = [T]
+        if isinstance(P, float):
+            P = [P]
+        if isinstance(X, str):
+            X = [X]
+        if isinstance(mechanism, str):
+            mechanism = [mechanism]
+
+        return cls(*zip(*product(
+            list(T),
+            list(P),
+            list(X),
+            list(mechanism)
+        )), *args, **kwargs)
