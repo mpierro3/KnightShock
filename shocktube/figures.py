@@ -1,3 +1,4 @@
+import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 
@@ -10,7 +11,10 @@ class IDTPlot:
     """
 
     exp_props = {"linestyle": "", "marker": "o"}
+    """Default properties for all experimental error bars."""
+
     sim_props = {}
+    """Default properties for all simulation lines."""
 
     def __init__(self, ax=None):
         if ax is None:
@@ -29,27 +33,30 @@ class IDTPlot:
         self.ax.yaxis.set_minor_formatter(ticker.LogFormatter(labelOnlyBase=False, minor_thresholds=(2, 1.25)))
         self.ax.yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:.0f}"))
 
-    def add_exp(self, T, IDT, uncertainty=0, **args):
+    def add_exp(self, T, tau, uncertainty=0, **args):
         """Add experimental ignition delay data with uncertainty to plot."""
-        self.ax.errorbar(1000 / T, IDT, yerr=uncertainty*IDT, **(IDTPlot.exp_props | args))
+        T = np.asarray(T)
+        tau = np.asarray(tau)
+        return self.ax.errorbar(1000 / T, tau, yerr=uncertainty * tau, **(IDTPlot.exp_props | args))
 
-    def add_sim(self, T, IDT, **args):
+    def add_sim(self, T, tau, **args):
         """Add simulated ignition delay data to plot."""
-        self.ax.plot(1000 / T, IDT, **(IDTPlot.sim_props | args))
+        T = np.asarray(T)
+        return self.ax.plot(1000 / T, tau, **(IDTPlot.sim_props | args))
 
     @property
-    def T_limits(self) -> tuple[float, float]:
+    def T_lim(self) -> tuple[float, float]:
         value = self.ax.get_xlim()
         return 1000 / value[1], 1000 / value[0]
 
-    @T_limits.setter
-    def T_limits(self, value: tuple[float, float]):
+    @T_lim.setter
+    def T_lim(self, value: tuple[float, float]):
         self.ax.set_xlim(1000 / value[1], 1000 / value[0])
 
     @property
-    def IDT_limits(self) -> tuple[float, float]:
+    def tau_lim(self) -> tuple[float, float]:
         return self.ax.get_ylim()
 
-    @IDT_limits.setter
-    def IDT_limits(self, value: tuple[float, float]):
+    @tau_lim.setter
+    def tau_lim(self, value: tuple[float, float]):
         self.ax.set_ylim(value)
