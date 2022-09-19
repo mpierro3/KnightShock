@@ -68,9 +68,11 @@ class Simulation:
 
         x = self.T if species is None else self.X(species)
         if method == "inflection":
-            return self.t[np.argmax(np.diff(x) / np.diff(self.t))]
+            i = np.argmax(np.diff(x) / np.diff(self.t))
+            return self.t[i] if i != len(self.t) - 2 else np.nan
         elif method == "peak":
-            return self.t[np.argmax(x)]
+            i = np.argmax(x)
+            return self.t[i] if i != len(self.t) - 1 else np.nan
         else:
             raise ValueError(f"Invalid method '{method}'; valid methods are 'inflection' and 'peak'.")
 
