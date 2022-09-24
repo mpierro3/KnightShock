@@ -1,7 +1,9 @@
+import knightshock.absorption
+import knightshock.figures
+import knightshock.kinetics
+
+
 def format_mixture(mixture: str | dict) -> dict[str, float]:
-    """
-    Returns the mixture in standardized formatting.
-    """
     if isinstance(mixture, dict):
         return dict((x.strip().upper(), float(y)) for x, y in mixture.items())
     elif isinstance(mixture, str):

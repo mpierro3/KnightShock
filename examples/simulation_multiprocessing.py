@@ -1,17 +1,17 @@
-from shocktube.kinetics import SimulationPool
-from shocktube.figures import IDTPlot
+import knightshock as ks
+
 
 from matplotlib import pyplot as plt
 import numpy as np
 
 if __name__ == "__main__":
-    sim_pool = SimulationPool(
-        np.linspace(1100, 1300, 100),
+    sim_pool = ks.kinetics.SimulationPool(
+        "gri30.yaml",
+        np.linspace(1000, 1300, 100),
         200e5,
-        "CH4: 0.05, O2: 0.10, AR: 0.85",
-        "gri30.yaml"
+        {"CH4": 0.05, "O2": 0.10, "AR": 0.85}
     )
 
-    plot = IDTPlot()
-    plot.add_sim(sim_pool.cases["T"].values, sim_pool.cases["IDT"].values * 1E6)
+    plot = ks.figures.IDTPlot()
+    plot.add_sim(sim_pool.cases["T"].values, sim_pool.cases["tau"].values * 1E6)
     plt.show()

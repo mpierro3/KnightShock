@@ -8,18 +8,20 @@ import pandas as pd
 
 
 class Simulation:
-    def __init__(self, gas: ct.Solution, T: float, P: float, X, t: float = 5e-3):
+    def __init__(self, gas: ct.Solution | str, T: float, P: float, X, t: float = 5e-3):
         """
         A class for initializing and running a zero-dimensional homogeneous reactor simulation.
 
         Parameters:
-            gas: Cantera gas phase object.
+            gas: Cantera gas phase object or filepath to mechanism.
             T: Temperature [K].
             P: Pressure [Pa].
             X: Species mole fractions.
-            t: Time [s].
+            t: End time [s].
 
         """
+
+        gas = gas if isinstance(gas, ct.Solution) else ct.Solution(gas)
 
         gas.TPX = T, P, X
         self.reactor = ct.Reactor(gas)
@@ -32,26 +34,38 @@ class Simulation:
         while self.reactor_net.time < t:
             self.reactor_net.step()
             self.states.append(self.reactor.thermo.state, t=self.reactor_net.time)
+            if i % 100 == 0:
+                print(f"t = {self.reactor_net.time * 1e6:.1f} μs")
             i += 1
 
     @property
-    def t(self):
+    def t(self) -> np.ndarray[float]:
+        """Reactor elapsed time [s]."""
         return self.states.t
 
     @property
-    def T(self):
+    def T(self) -> np.ndarray[float]:
+        """Reactor temperature history [K]."""
         return self.states.T
 
     @property
-    def P(self):
+    def P(self) -> np.ndarray[float]:
+        """Reactor pressure history [Pa]."""
         return self.states.P
 
-    def X(self, species: str):
+    def X(self, species: str) -> np.ndarray[float]:
+        """
+        Returns the mole fraction history for the given species.
+
+        Args:
+            species: Name of species.
+
+        """
         return self.states(species).X.flatten()
 
     def ignition_delay_time(self, species: str = None, *, method: str = "inflection") -> float:
         """
-        Calculates the ignition delay time from the reactor temperature, or `species` mole fraction if given,
+        Calculates the ignition delay time from the reactor temperature history, or `species` mole fraction if given,
         using the specified `method`.
 
         Args:
@@ -106,16 +120,14 @@ class Simulation:
 
 
 class SimulationPool:
-    def __init__(self, T, P, X, mechanism, n: int = None, **kwargs):
-        self.cases = pd.DataFrame({
-            "T": T,
-            "P": P,
-            "X": X,
-            "mechanism": mechanism
-        })
+    def __init__(self, mech, T, P, X, n: int = None, **kwargs):
+        self.cases = pd.DataFrame({"mech": mech, "T": T, "P": P, "X": X})
+
+        def run_case(*args):
+            return Simulation(*args).ignition_delay_time(**kwargs)
 
         with Pool(n) as pool:
-            self.cases["IDT"] = pool.starmap(self._run_case, self)
+            self.cases["tau"] = pool.starmap(run_case, self)
 
     def __getitem__(self, item):
         return self.cases.iloc[item].values
@@ -129,10 +141,10 @@ class SimulationPool:
     @classmethod
     def parameter_study(
             cls,
+            mech: str | list[str],
             T: float | Iterable[float],
             P: float | Iterable[float],
             X: str | dict[str, float] | list[str | dict[str, float]],
-            mechanism: str | list[str],
             *args,
             **kwargs
     ):
@@ -140,14 +152,14 @@ class SimulationPool:
             T = [T]
         if isinstance(P, float):
             P = [P]
-        if isinstance(X, str):
+        if isinstance(X, (str, dict)):
             X = [X]
-        if isinstance(mechanism, str):
-            mechanism = [mechanism]
+        if isinstance(mech, str):
+            mech = [mech]
 
         return cls(*zip(*product(
+            list(mech),
             list(T),
             list(P),
             list(X),
-            list(mechanism)
         )), *args, **kwargs)
