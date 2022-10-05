@@ -1,6 +1,6 @@
-import knightshock.absorption
-import knightshock.figures
-import knightshock.kinetics
+from . import absorption
+from . import figures
+from . import kinetics
 
 
 def format_mixture(mixture: str | dict) -> dict[str, float]:
