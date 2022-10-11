@@ -1,18 +1,13 @@
-from multiprocessing import Pool
-from itertools import product
-from typing import Iterable
-
 import cantera as ct
 import numpy as np
-import pandas as pd
 
 
 class Simulation:
-    def __init__(self, gas: ct.Solution | str, T: float, P: float, X, t: float = 5e-3):
+    def __init__(self, gas: ct.Solution | str, T: float, P: float, X: str | dict[str, float], t: float = 10e-3):
         """
         A class for initializing and running a zero-dimensional homogeneous reactor simulation.
 
-        Parameters:
+        Args:
             gas: Cantera gas phase object or filepath to mechanism.
             T: Temperature [K].
             P: Pressure [Pa].
@@ -34,8 +29,6 @@ class Simulation:
         while self.reactor_net.time < t:
             self.reactor_net.step()
             self.states.append(self.reactor.thermo.state, t=self.reactor_net.time)
-            if i % 100 == 0:
-                print(f"t = {self.reactor_net.time * 1e6:.1f} μs")
             i += 1
 
     @property
@@ -65,14 +58,20 @@ class Simulation:
 
     def ignition_delay_time(self, species: str = None, *, method: str = "inflection") -> float:
         """
-        Calculates the ignition delay time from the reactor temperature history, or `species` mole fraction if given,
-        using the specified `method`.
+        Calculates the ignition delay time from the reactor temperature history, or species mole fraction if given,
+        using the specified method.
+
+        !!! Note
+            Returns [`np.nan`](https://numpy.org/doc/stable/reference/constants.html#numpy.nan) if calculated
+            ignition delay time occurs at the end of the simulated time.
 
         Args:
             species: Name of species.
             method:
                 Method used to calculate ignition delay time.
+
                   - 'inflection' point (max slope)
+
                   - 'peak'
 
         Returns:
@@ -118,48 +117,3 @@ class Simulation:
 
         return species[:n]
 
-
-class SimulationPool:
-    def __init__(self, mech, T, P, X, n: int = None, **kwargs):
-        self.cases = pd.DataFrame({"mech": mech, "T": T, "P": P, "X": X})
-
-        def run_case(*args):
-            return Simulation(*args).ignition_delay_time(**kwargs)
-
-        with Pool(n) as pool:
-            self.cases["tau"] = pool.starmap(run_case, self)
-
-    def __getitem__(self, item):
-        return self.cases.iloc[item].values
-
-    @staticmethod
-    def _run_case(T: float, P: float, X, mechanism: str, **kwargs):
-        gas = ct.Solution(mechanism)
-        sim = Simulation(gas, T, P, X)
-        return sim.ignition_delay_time(**kwargs)
-
-    @classmethod
-    def parameter_study(
-            cls,
-            mech: str | list[str],
-            T: float | Iterable[float],
-            P: float | Iterable[float],
-            X: str | dict[str, float] | list[str | dict[str, float]],
-            *args,
-            **kwargs
-    ):
-        if isinstance(T, float):
-            T = [T]
-        if isinstance(P, float):
-            P = [P]
-        if isinstance(X, (str, dict)):
-            X = [X]
-        if isinstance(mech, str):
-            mech = [mech]
-
-        return cls(*zip(*product(
-            list(mech),
-            list(T),
-            list(P),
-            list(X),
-        )), *args, **kwargs)
