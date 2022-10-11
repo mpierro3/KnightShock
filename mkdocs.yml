@@ -1,0 +1,65 @@
+site_name: KnightShock
+repo_name: VasuLab/KnightShock
+repo_url: https://github.com/VasuLab/KnightShock
+edit_uri: ""
+
+nav:
+  - Overview: index.md
+  - Reference:
+    - Absorption: reference/absorption.md
+    - Kinetics: reference/kinetics.md
+    - Figures: reference/figures.md
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: amber
+    accent: yellow
+  features:
+    - navigation.tabs
+    - toc.integrate
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tilde
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          rendering:
+            show_source: false
+            show_root_toc_entry: false
+            members_order: source
+            docstring_section_style: list
+            merge_init_into_class: true
+          selection:
+            filters:
+              - "!^_"  # exclude all members starting with _
+              - "^__init__$"  # but always include __init__ modules and methods
+  - search
+  - tags
+
+watch:
+  - knightshock
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
