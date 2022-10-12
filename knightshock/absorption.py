@@ -1,3 +1,4 @@
+import numpy as np
 import numpy.typing as npt
 
 
@@ -77,3 +78,50 @@ def species_mole_fraction(
     """
 
     return A / (sigma * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T)) * 1E6
+
+
+def multi_species_mole_fraction(
+        A: npt.ArrayLike[float],
+        sigma: npt.ArrayLike[float],
+        T: float | npt.ArrayLike[float],
+        P: float | npt.ArrayLike[float],
+        L: float
+) -> npt.NDArray[float]:
+    r"""
+    :fontawesome-solid-flask: Experimental
+
+    Calculates the mole fractions of `N` species from absorbance data at `N` wavelengths given absorption
+    cross-sections for each species at each wavelength. For mole fraction time histories, absorption cross-sections,
+    temperature, and pressure can be constant or varying with time.
+
+    Args:
+        A: Absorbance at each wavelength `(N, ...)`.
+        sigma: Species absorption cross-sections [cm^2] at each wavelength `(N, N, ...)`.
+        T: Absolute temperature [K] `(...)`.
+        P: Absolute pressure [Pa] `(...)`.
+        L: Path length [cm].
+
+    Returns:
+        X: Species mole fractions `(N, ...)`.
+
+    """
+    A = np.asarray(A)
+    sigma = np.asarray(sigma)
+    T = np.asarray(T)
+    P = np.asarray(P)
+
+    if A.ndim == 1:
+        assert sigma.ndim == 2 and T.shape == (1,) and P.shape == (1,)
+    elif A.ndim == 2:
+        A = np.moveaxis(A, -1, 0)
+
+        if sigma.ndim == 3:
+            sigma = np.moveaxis(sigma, -1, 0)
+        else:
+            sigma = np.broadcast_to(sigma, (A.shape[0],) + sigma.shape)
+
+    X = np.linalg.solve(sigma / 1E6 * AVOGADRO_NUMBER * P / (GAS_CONSTANT * T) * L, A)
+    if X.ndim == 2:
+        np.moveaxis(X, 0, 1)
+
+    return X
