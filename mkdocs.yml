@@ -6,6 +6,7 @@ edit_uri: ""
 nav:
   - Overview: index.md
   - Reference:
+    - Constants: reference/constants.md
     - Absorption: reference/absorption.md
     - Kinetics: reference/kinetics.md
     - Figures: reference/figures.md
