@@ -9,7 +9,7 @@ def absorbance(
         sigma: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float | npt.NDArray[float]
+        L: float
 ) -> float | npt.NDArray[float]:
     r"""Calculates the absorption for a species from the Beer-Lambert law.
 
@@ -32,7 +32,7 @@ def absorption_cross_section(
         X: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float | npt.NDArray[float]
+        L: float
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -56,7 +56,7 @@ def species_mole_fraction(
         sigma: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float | npt.NDArray[float]
+        L: float
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -108,14 +108,18 @@ def multi_species_mole_fraction(
     if A.ndim == 1:
         assert sigma.ndim == 2 and T.shape == (1,) and P.shape == (1,)
     elif A.ndim == 2:
-        A = np.moveaxis(A, -1, 0)
+        # For absorbance time histories, the arrays must be reshaped so that time is the outer
+        # axis, as the NumPy linear algebra routines operate on the inner matrices
 
+        A = np.moveaxis(A, -1, 0)
         if sigma.ndim == 3:
             sigma = np.moveaxis(sigma, -1, 0)
         else:
             sigma = np.broadcast_to(sigma, (A.shape[0],) + sigma.shape)
 
     X = np.linalg.solve(sigma / 1E6 * AVOGADRO_NUMBER * P / (GAS_CONSTANT * T) * L, A)
+
+    # For absorbance time histories, reshape the array so that time is the inner axis
     if X.ndim == 2:
         np.moveaxis(X, 0, 1)
 
