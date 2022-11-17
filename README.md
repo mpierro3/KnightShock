@@ -7,9 +7,7 @@ University of Central Florida.
 
 ## Installation
 
-> **Note**
-> 
-> KnightShock requires Python 3.10 or higher.
+> **Note** KnightShock requires Python 3.10 or higher.
 
 KnightShock can be cloned with the following command:
 
