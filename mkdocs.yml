@@ -19,7 +19,6 @@ theme:
     accent: yellow
   features:
     - navigation.tabs
-    - toc.integrate
   icon:
     repo: fontawesome/brands/github
 

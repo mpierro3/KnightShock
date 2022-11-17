@@ -1,4 +1,4 @@
-# Constants
+# `knightshock.constants`
 
 ::: knightshock.constants
     rendering:

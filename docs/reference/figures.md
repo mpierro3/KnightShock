@@ -1,1 +1,3 @@
+# `knightshock.figures`
+
 ::: knightshock.figures

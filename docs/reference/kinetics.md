@@ -1,1 +1,3 @@
+# `knightshock.kinetics`
+
 ::: knightshock.kinetics
