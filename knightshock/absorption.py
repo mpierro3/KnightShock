@@ -9,7 +9,7 @@ def absorbance(
         sigma: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float
+        L: float = 1
 ) -> float | npt.NDArray[float]:
     r"""Calculates the absorption for a species from the Beer-Lambert law.
 
@@ -32,7 +32,7 @@ def absorption_cross_section(
         X: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float
+        L: float = 1
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -56,7 +56,7 @@ def species_mole_fraction(
         sigma: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float
+        L: float = 1
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -76,11 +76,11 @@ def species_mole_fraction(
 
 
 def multi_species_mole_fraction(
-        A: npt.ArrayLike[float],
-        sigma: npt.ArrayLike[float],
-        T: float | npt.ArrayLike[float],
-        P: float | npt.ArrayLike[float],
-        L: float
+        A: npt.NDArray[float],
+        sigma: npt.NDArray[float],
+        T: float | npt.NDArray[float],
+        P: float | npt.NDArray[float],
+        L: float = 1
 ) -> npt.NDArray[float]:
     r"""
     :fontawesome-solid-flask: Experimental

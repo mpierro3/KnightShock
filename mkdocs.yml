@@ -5,6 +5,9 @@ edit_uri: ""
 
 nav:
   - Overview: index.md
+  - Examples:
+    - Planning:
+      - Absorption: examples/planning/absorption.ipynb
   - Reference:
     - Constants: reference/constants.md
     - Absorption: reference/absorption.md
@@ -19,6 +22,7 @@ theme:
     accent: yellow
   features:
     - navigation.tabs
+    - navigation.sections
   icon:
     repo: fontawesome/brands/github
 

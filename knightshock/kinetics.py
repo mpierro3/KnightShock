@@ -3,7 +3,13 @@ import numpy as np
 
 
 class Simulation:
-    def __init__(self, gas: ct.Solution | str, T: float, P: float, X: str | dict[str, float], t: float = 10e-3):
+    def __init__(
+            self,
+            gas: ct.Solution | str,
+            T: float,
+            P: float,
+            X: str | dict[str, float],
+    ):
         """
         A class for initializing and running a zero-dimensional homogeneous reactor simulation.
 
@@ -12,24 +18,34 @@ class Simulation:
             T: Temperature [K].
             P: Pressure [Pa].
             X: Species mole fractions.
-            t: End time [s].
 
         """
 
-        gas = gas if isinstance(gas, ct.Solution) else ct.Solution(gas)
+        self.gas = gas if isinstance(gas, ct.Solution) else ct.Solution(gas)
 
-        gas.TPX = T, P, X
-        self.reactor = ct.Reactor(gas)
+        self.gas.TPX = T, P, X
+        self.reactor = ct.Reactor(self.gas)
         self.reactor_net = ct.ReactorNet([self.reactor])
-        self.states = ct.SolutionArray(gas, extra=["t"])
+        self.states = ct.SolutionArray(self.gas, extra=["t"])
 
         self.states.append(self.reactor.thermo.state, t=0)  # Add initial state
 
+    def run(
+            self,
+            t: float = 10e-3,
+    ):
+        """
+        Args:
+            t: Simulation end time [s].
+
+        """
         i = 0
         while self.reactor_net.time < t:
             self.reactor_net.step()
             self.states.append(self.reactor.thermo.state, t=self.reactor_net.time)
             i += 1
+
+        return self
 
     @property
     def t(self) -> np.ndarray[float]:
