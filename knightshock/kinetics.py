@@ -1,3 +1,5 @@
+from typing import Type
+
 import cantera as ct
 import numpy as np
 
@@ -9,6 +11,8 @@ class Simulation:
             T: float,
             P: float,
             X: str | dict[str, float],
+            *,
+            reactor: ct.Reactor | Type[ct.Reactor] = ct.Reactor
     ):
         """
         A class for initializing and running a zero-dimensional homogeneous reactor simulation.
@@ -18,13 +22,24 @@ class Simulation:
             T: Temperature [K].
             P: Pressure [Pa].
             X: Species mole fractions.
+            reactor: Cantera reactor object or subclass.
 
         """
 
         self.gas = gas if isinstance(gas, ct.Solution) else ct.Solution(gas)
-
         self.gas.TPX = T, P, X
-        self.reactor = ct.Reactor(self.gas)
+
+        try:
+            if isinstance(reactor, ct.Reactor):  # ct.Reactor is considered to be a subclass of itself
+                self.reactor = reactor
+                self.reactor.insert(self.gas)
+            elif issubclass(reactor, ct.Reactor):  # Raises TypeError if argument is not a class
+                self.reactor = reactor(self.gas)
+            else:
+                raise TypeError
+        except TypeError:
+            raise TypeError("Reactor argument must be a ct.Reactor object or subclass.") from None
+
         self.reactor_net = ct.ReactorNet([self.reactor])
         self.states = ct.SolutionArray(self.gas, extra=["t"])
 
