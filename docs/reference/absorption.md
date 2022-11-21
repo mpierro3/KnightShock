@@ -1,5 +1,5 @@
 # `knightshock.absorption`
 
 ::: knightshock.absorption
-    rendering:
+    options:
       heading_level: 3

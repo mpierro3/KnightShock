@@ -1,5 +1,5 @@
 # `knightshock.constants`
 
 ::: knightshock.constants
-    rendering:
+    options:
       heading_level: 3

@@ -46,13 +46,12 @@ plugins:
       default_handler: python
       handlers:
         python:
-          rendering:
+          options:
             show_source: false
             show_root_toc_entry: false
             members_order: source
             docstring_section_style: list
             merge_init_into_class: true
-          selection:
             filters:
               - "!^_"  # exclude all members starting with _
               - "^__init__$"  # but always include __init__ modules and methods
