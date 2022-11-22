@@ -26,6 +26,9 @@ class IDTFigure:
     sim_props = {}
     """Default properties for all simulation line plots."""
 
+    units: str = "μs"
+    """Default units for ignition delay time."""
+
     def __init__(self, ax: mpl.axes.Axes | None = None):
         """
         Args:
@@ -48,9 +51,9 @@ class IDTFigure:
         self.sim_handles = []
         self.sim_labels = []
 
-        self.ax.set_ylabel(f"Ignition Delay Time [$μs$]")
-        self.ax.set_xlabel("1000/T [$K^-1$]")
-        self.ax2.set_xlabel("Temperature [$K$]")
+        self.ax.set_ylabel(r"Ignition Delay Time [$\mathrm{" + self.units + "}$]")
+        self.ax.set_xlabel(r"1000/T [$\mathrm{K^{-1}}$]")
+        self.ax2.set_xlabel(r"Temperature [$\mathrm{K}$]")
 
         self.ax.yaxis.set_minor_formatter(mpl.ticker.LogFormatter(labelOnlyBase=False, minor_thresholds=(2, 1.25)))
         self.ax.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter("{x:.0f}"))
