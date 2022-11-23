@@ -1,6 +1,0 @@
-cantera==2.6.0a4
-matplotlib
-mkdocs-material
-mkdocs-jupyter
-mkdocstrings-python
-numpy
