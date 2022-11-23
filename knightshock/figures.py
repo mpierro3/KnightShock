@@ -5,11 +5,20 @@ from matplotlib import pyplot as plt
 
 
 class IDTFigure:
-    """Class for creating IDT figures with the standard layout:
+    """Class for creating ignition delay time figures with the standard layout:
 
     - Inverse temperature (1000/T) x-axis (bottom)
     - Log-scale IDT y-axis
     - Secondary temperature x-axis (top)
+
+    Functions are provided for plotting experimental data ([`add_exp`][knightshock.figures.IDTFigure.add_exp]) as
+    scatter plots with or without error bars and for plotting model predictions from simulations
+    ([`add_sim`][knightshock.figures.IDTFigure.add_sim]) as line plots, in addition to other functionality.
+
+
+    !!! Important
+        Keyword arguments to functions are passed to the underlying matplotlib function calls and override
+        the default property dicts set as class attributes.
 
     Attributes:
         ax: Inverse temperature axis.
@@ -32,7 +41,7 @@ class IDTFigure:
     def __init__(self, ax: mpl.axes.Axes | None = None):
         """
         Args:
-            ax: Matplotlib [`Axes`](https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes)
+            ax: Existing matplotlib [`Axes`](https://matplotlib.org/stable/api/axes_api.html#matplotlib.axes.Axes)
                 object for plotting (optional).
 
         """
@@ -66,12 +75,13 @@ class IDTFigure:
             **kwargs
     ) -> mpl.collections.PathCollection | mpl.container.ErrorbarContainer:
         """
-        Add experimental ignition delay data to the figure.
+        Add experimental ignition delay data to the figure as scatter plots. If `uncertainty` is given,
+        error bars are included.
 
         Args:
             T: Temperatures [K].
-            IDT: Ignition delay times [μs].
-            uncertainty: Experimental uncertainty.
+            IDT: Ignition delay times [[`units`][knightshock.figures.IDTFigure.units]].
+            uncertainty: Experimental uncertainty (as a fraction of `IDT`).
 
         """
         T = np.asarray(T)
@@ -94,11 +104,11 @@ class IDTFigure:
             IDT: int | float | npt.ArrayLike,
             **kwargs
     ) -> list[mpl.lines.Line2D]:
-        """Add ignition delay model predictions to plot.
+        """Add ignition delay model predictions to the figure.
 
         Args:
             T: Temperatures [K].
-            IDT: Ignition delay times [μs].
+            IDT: Ignition delay times [[`units`][knightshock.figures.IDTFigure.units]].
 
         """
         T = np.asarray(T)
