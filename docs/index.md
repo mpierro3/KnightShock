@@ -1,7 +1,5 @@
 # KnightShock
 
-## Overview
-
 KnightShock is a shock tube experiment planning and data analysis Python package developed at Vasu Lab at the
 University of Central Florida.
 

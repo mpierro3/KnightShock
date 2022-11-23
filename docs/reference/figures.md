@@ -7,5 +7,6 @@ A module for creating useful figures using `matplotlib`.
     to utilize the functionality of the classes. The underlying `Axes` objects are exposed as object attributes to 
     allow for standard use of the `matplotlib` interface.
 
+---
 
 ::: knightshock.figures

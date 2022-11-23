@@ -4,7 +4,9 @@ repo_url: https://github.com/VasuLab/KnightShock
 edit_uri: ""
 
 nav:
-  - Overview: index.md
+  - Overview:
+    - index.md
+    - License: license.md
   - Examples:
     - Planning:
       - Absorption: examples/planning/absorption.ipynb
@@ -21,6 +23,7 @@ theme:
     primary: amber
     accent: yellow
   features:
+    - navigation.indexes
     - navigation.tabs
     - navigation.sections
   icon:
@@ -32,6 +35,7 @@ markdown_extensions:
       generic: true
   - pymdownx.caret
   - pymdownx.details
+  - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.tilde
   - attr_list
