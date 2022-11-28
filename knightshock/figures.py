@@ -15,7 +15,6 @@ class IDTFigure:
     scatter plots with or without error bars and for plotting model predictions from simulations
     ([`add_sim`][knightshock.figures.IDTFigure.add_sim]) as line plots, in addition to other functionality.
 
-
     !!! Important
         Keyword arguments to functions are passed to the underlying matplotlib function calls and override
         the default property dicts set as class attributes.
@@ -81,7 +80,7 @@ class IDTFigure:
         Args:
             T: Temperatures [K].
             IDT: Ignition delay times [[`units`][knightshock.figures.IDTFigure.units]].
-            uncertainty: Experimental uncertainty (as a fraction of `IDT`).
+            uncertainty: Experimental uncertainty as a fraction of `IDT` (optional).
 
         """
         T = np.asarray(T)
@@ -134,6 +133,7 @@ class IDTFigure:
 
     @property
     def T_lim(self) -> tuple[float, float]:
+        """Get/set the temperature [K] limits of the figure."""
         value = self.ax.get_xlim()
         return 1000 / value[1], 1000 / value[0]
 
@@ -143,6 +143,7 @@ class IDTFigure:
 
     @property
     def IDT_lim(self) -> tuple[float, float]:
+        """Get/set the ignition delay time [[`units`][knightshock.figures.IDTFigure.units]] limits of the figure."""
         return self.ax.get_ylim()
 
     @IDT_lim.setter

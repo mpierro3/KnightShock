@@ -18,7 +18,7 @@ def absorbance(
         sigma: Absorption cross-section [cm^2^].
         T: Absolute temperature [K].
         P: Absolute pressure [Pa].
-        L: Path length [cm].
+        L: Path length [cm] (optional).
 
     Returns:
         A: Absorbance.
@@ -32,7 +32,7 @@ def absorption_cross_section(
         X: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float = 1
+        L: float
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -56,7 +56,7 @@ def species_mole_fraction(
         sigma: float | npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float = 1
+        L: float
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -80,7 +80,7 @@ def multi_species_mole_fraction(
         sigma: npt.NDArray[float],
         T: float | npt.NDArray[float],
         P: float | npt.NDArray[float],
-        L: float = 1
+        L: float
 ) -> npt.NDArray[float]:
     r"""
     :fontawesome-solid-flask: Experimental
@@ -92,8 +92,8 @@ def multi_species_mole_fraction(
     Args:
         A: Absorbance at each wavelength `(N, ...)`.
         sigma: Species absorption cross-sections [cm^2] at each wavelength `(N, N, ...)`.
-        T: Absolute temperature [K] `(...)`.
-        P: Absolute pressure [Pa] `(...)`.
+        T: Absolute temperature [K].
+        P: Absolute pressure [Pa].
         L: Path length [cm].
 
     Returns:

@@ -5,6 +5,17 @@ import numpy as np
 
 
 class Simulation:
+    """
+    A class for initializing and running a zero-dimensional homogeneous reactor simulation.
+
+    Attributes:
+        gas: Cantera `Solution` object.
+        reactor: Cantera `Reactor` object.
+        reactor_net: Cantera `ReactorNet` object.
+        states: Cantera `SolutionArray` object.
+
+    """
+
     def __init__(
             self,
             gas: ct.Solution | str,
@@ -15,14 +26,13 @@ class Simulation:
             reactor: ct.Reactor | Type[ct.Reactor] = ct.Reactor
     ):
         """
-        A class for initializing and running a zero-dimensional homogeneous reactor simulation.
 
         Args:
             gas: Cantera gas phase object or filepath to mechanism.
             T: Temperature [K].
             P: Pressure [Pa].
             X: Species mole fractions.
-            reactor: Cantera reactor object or subclass.
+            reactor: Cantera reactor object or subclass (optional).
 
         """
 
@@ -51,7 +61,7 @@ class Simulation:
     ):
         """
         Args:
-            t: Simulation end time [s].
+            t: Simulation end time [s] (optional).
 
         """
         i = 0
@@ -97,9 +107,9 @@ class Simulation:
             ignition delay time occurs at the end of the simulated time.
 
         Args:
-            species: Name of species.
+            species: Name of species (optional).
             method:
-                Method used to calculate ignition delay time.
+                Method used to calculate ignition delay time (optional).
 
                   - 'inflection' point (max slope)
 
@@ -126,8 +136,8 @@ class Simulation:
         all non-excluded species are returned.
 
         Args:
-            n: Number of species.
-            exclude: Species to exclude.
+            n: Number of species (optional).
+            exclude: Species to exclude (optional).
 
         Returns:
             List of top species.
