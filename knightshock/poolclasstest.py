@@ -69,6 +69,9 @@ class SimulationPool:
         print(f'saving {str(sim.gas.source).split(".")[0]}_P={P / 1e6:.2}MPa_T={T}K_{mix_name}')
         'Saving species time history data'
         Xhistory = pd.DataFrame()
+        Xhistory['t'] = sim.t
+        Xhistory['T'] = sim.P
+        Xhistory['P'] = sim.P
         for species in sim.get_top_species():
             species_history = pd.DataFrame(sim.X(species), columns=[species])
             Xhistory = pd.concat([Xhistory, species_history], axis=1)
@@ -98,7 +101,6 @@ if __name__ == '__main__':
     mixtures = {}
 
     mixtures['mix A'] = 'CH4: 0.04, O2: 0.08, AR: 0.88'
-    mixtures['mix B'] = 'CH4: 0.06, O2: 0.08, AR: 0.86'
     Mechanisms = [r'C:\Users\ch733787\Documents\GitHub\KnightShock\HPST\gri30.yaml']
 
     t1 = time()
