@@ -2,12 +2,18 @@
 
 ## Overview
 
+> **Warning** 
+> 
+> KnightShock is currently in alpha; therefore, its interface is not guaranteed to be stable.
+
 KnightShock is a shock tube experiment planning and data analysis Python package developed at Vasu Lab at the
 University of Central Florida.
 
 ## Installation
 
-> **Note** KnightShock requires Python 3.10 or higher.
+> **Note** 
+> 
+> KnightShock requires Python 3.10 or higher.
 
 KnightShock can be cloned with the following command:
 

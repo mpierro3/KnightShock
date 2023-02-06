@@ -1,5 +1,8 @@
 # KnightShock
 
+!!! warning
+    KnightShock is currently in alpha; therefore, its interface is not guaranteed to be stable.
+
 KnightShock is a shock tube experiment planning and data analysis Python package developed at Vasu Lab at the
 University of Central Florida.
 
