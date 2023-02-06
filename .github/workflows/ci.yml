@@ -21,5 +21,6 @@ jobs:
           pip install cantera
           pip install matplotlib
           pip install mkdocs-material
+          pip install mkdocs-jupyter
           pip install mkdocstrings-python
       - run: mkdocs gh-deploy --force
