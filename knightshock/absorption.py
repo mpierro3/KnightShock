@@ -5,11 +5,11 @@ import numpy.typing as npt
 
 
 def absorbance(
-        X: float | npt.NDArray[float],
-        sigma: float | npt.NDArray[float],
-        T: float | npt.NDArray[float],
-        P: float | npt.NDArray[float],
-        L: float = 1
+    X: float | npt.NDArray[float],
+    sigma: float | npt.NDArray[float],
+    T: float | npt.NDArray[float],
+    P: float | npt.NDArray[float],
+    L: float = 1,
 ) -> float | npt.NDArray[float]:
     r"""Calculates the absorption for a species from the Beer-Lambert law.
 
@@ -24,15 +24,15 @@ def absorbance(
         A: Absorbance.
 
     """
-    return sigma * X * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T) / 1E6
+    return sigma * X * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T) / 1e6
 
 
 def absorption_cross_section(
-        A: float | npt.NDArray[float],
-        X: float | npt.NDArray[float],
-        T: float | npt.NDArray[float],
-        P: float | npt.NDArray[float],
-        L: float
+    A: float | npt.NDArray[float],
+    X: float | npt.NDArray[float],
+    T: float | npt.NDArray[float],
+    P: float | npt.NDArray[float],
+    L: float,
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -48,15 +48,15 @@ def absorption_cross_section(
 
     """
 
-    return A / (X * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T)) * 1E6
+    return A / (X * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T)) * 1e6
 
 
 def species_mole_fraction(
-        A: float | npt.NDArray[float],
-        sigma: float | npt.NDArray[float],
-        T: float | npt.NDArray[float],
-        P: float | npt.NDArray[float],
-        L: float
+    A: float | npt.NDArray[float],
+    sigma: float | npt.NDArray[float],
+    T: float | npt.NDArray[float],
+    P: float | npt.NDArray[float],
+    L: float,
 ) -> float | npt.NDArray[float]:
     """Calculates the species mole fraction from the Beer-Lambert law.
 
@@ -72,15 +72,15 @@ def species_mole_fraction(
 
     """
 
-    return A / (sigma * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T)) * 1E6
+    return A / (sigma * AVOGADRO_NUMBER * L * P / (GAS_CONSTANT * T)) * 1e6
 
 
 def multi_species_mole_fraction(
-        A: npt.NDArray[float],
-        sigma: npt.NDArray[float],
-        T: float | npt.NDArray[float],
-        P: float | npt.NDArray[float],
-        L: float
+    A: npt.NDArray[float],
+    sigma: npt.NDArray[float],
+    T: float | npt.NDArray[float],
+    P: float | npt.NDArray[float],
+    L: float,
 ) -> npt.NDArray[float]:
     r"""
     :fontawesome-solid-flask: Experimental
@@ -117,7 +117,7 @@ def multi_species_mole_fraction(
         else:
             sigma = np.broadcast_to(sigma, (A.shape[0],) + sigma.shape)
 
-    X = np.linalg.solve(sigma / 1E6 * AVOGADRO_NUMBER * P / (GAS_CONSTANT * T) * L, A)
+    X = np.linalg.solve(sigma / 1e6 * AVOGADRO_NUMBER * P / (GAS_CONSTANT * T) * L, A)
 
     # For absorbance time histories, reshape the array so that time is the inner axis
     if X.ndim == 2:

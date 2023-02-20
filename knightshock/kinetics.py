@@ -17,13 +17,13 @@ class Simulation:
     """
 
     def __init__(
-            self,
-            gas: ct.Solution | str,
-            T: float,
-            P: float,
-            X: str | dict[str, float],
-            *,
-            reactor: ct.Reactor | Type[ct.Reactor] = ct.Reactor
+        self,
+        gas: ct.Solution | str,
+        T: float,
+        P: float,
+        X: str | dict[str, float],
+        *,
+        reactor: ct.Reactor | Type[ct.Reactor] = ct.Reactor,
     ):
         """
 
@@ -40,15 +40,22 @@ class Simulation:
         self.gas.TPX = T, P, X
 
         try:
-            if isinstance(reactor, ct.Reactor):  # ct.Reactor is considered to be a subclass of itself
+            # ct.Reactor is considered to be a subclass of itself
+            if isinstance(reactor, ct.Reactor):
                 self.reactor = reactor
                 self.reactor.insert(self.gas)
-            elif issubclass(reactor, ct.Reactor):  # Raises TypeError if argument is not a class
+
+            # Raises TypeError if argument is not a class
+            elif issubclass(reactor, ct.Reactor):
                 self.reactor = reactor(self.gas)
+
             else:
                 raise TypeError
+
         except TypeError:
-            raise TypeError("Reactor argument must be a ct.Reactor object or subclass.") from None
+            raise TypeError(
+                "Reactor argument must be a ct.Reactor object or subclass."
+            ) from None
 
         self.reactor_net = ct.ReactorNet([self.reactor])
         self.states = ct.SolutionArray(self.gas, extra=["t"])
@@ -56,8 +63,8 @@ class Simulation:
         self.states.append(self.reactor.thermo.state, t=0)  # Add initial state
 
     def run(
-            self,
-            t: float = 10e-3,
+        self,
+        t: float = 10e-3,
     ):
         """
         Args:
@@ -97,7 +104,9 @@ class Simulation:
         """
         return self.states(species).X.flatten()
 
-    def ignition_delay_time(self, species: str = None, *, method: str = "inflection") -> float:
+    def ignition_delay_time(
+        self, species: str = None, *, method: str = "inflection"
+    ) -> float:
         """
         Calculates the ignition delay time from the reactor temperature history, or species mole fraction if given,
         using the specified method.
@@ -128,9 +137,13 @@ class Simulation:
             i = np.argmax(x)
             return self.t[i] if i != len(self.t) - 1 else np.nan
         else:
-            raise ValueError(f"Invalid method '{method}'; valid methods are 'inflection' and 'peak'.")
+            raise ValueError(
+                f"Invalid method '{method}'; valid methods are 'inflection' and 'peak'."
+            )
 
-    def get_top_species(self, n: int = None, *, exclude: str | list[str] = None) -> list[str]:
+    def get_top_species(
+        self, n: int = None, *, exclude: str | list[str] = None
+    ) -> list[str]:
         """
         Returns the top `n` species by mole fraction in descending order. If `n` is not given,
         all non-excluded species are returned.
@@ -145,7 +158,9 @@ class Simulation:
         """
 
         X_max = np.max(self.states.X.T, axis=1)
-        species = [t[1] for t in sorted(zip(X_max, self.states.species_names), reverse=True)]
+        species = [
+            t[1] for t in sorted(zip(X_max, self.states.species_names), reverse=True)
+        ]
 
         if exclude is not None:
             if isinstance(exclude, str):
@@ -157,4 +172,3 @@ class Simulation:
                     pass
 
         return species[:n]
-

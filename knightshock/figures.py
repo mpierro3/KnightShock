@@ -52,7 +52,7 @@ class IDTFigure:
             return 1000 / x
 
         self.ax.set_yscale("log")
-        self.ax2 = self.ax.secondary_xaxis('top', functions=(convert, convert))
+        self.ax2 = self.ax.secondary_xaxis("top", functions=(convert, convert))
 
         self.exp_handles = []
         self.exp_labels = []
@@ -63,15 +63,17 @@ class IDTFigure:
         self.ax.set_xlabel(r"1000/T [$\mathrm{K^{-1}}$]")
         self.ax2.set_xlabel(r"Temperature [$\mathrm{K}$]")
 
-        self.ax.yaxis.set_minor_formatter(mpl.ticker.LogFormatter(labelOnlyBase=False, minor_thresholds=(2, 1.25)))
+        self.ax.yaxis.set_minor_formatter(
+            mpl.ticker.LogFormatter(labelOnlyBase=False, minor_thresholds=(2, 1.25))
+        )
         self.ax.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter("{x:.0f}"))
 
     def add_exp(
-            self,
-            T: int | float | npt.ArrayLike,
-            IDT: int | float | npt.ArrayLike,
-            uncertainty: float = 0,
-            **kwargs
+        self,
+        T: int | float | npt.ArrayLike,
+        IDT: int | float | npt.ArrayLike,
+        uncertainty: float = 0,
+        **kwargs
     ) -> mpl.collections.PathCollection | mpl.container.ErrorbarContainer:
         """
         Add experimental ignition delay data to the figure as scatter plots. If `uncertainty` is given,
@@ -90,18 +92,19 @@ class IDTFigure:
             c = self.ax.scatter(1000 / T, IDT, **(self.exp_props | kwargs))
             self.exp_handles.append(c)
         else:
-            c = self.ax.errorbar(1000 / T, IDT, yerr=uncertainty * IDT,
-                                 **(self.exp_props | self.error_props | kwargs))
+            c = self.ax.errorbar(
+                1000 / T,
+                IDT,
+                yerr=uncertainty * IDT,
+                **(self.exp_props | self.error_props | kwargs)
+            )
             self.exp_handles.append(c[0])
 
         self.exp_labels.append(kwargs["label"] if "label" in kwargs else None)
         return c
 
     def add_sim(
-            self,
-            T: int | float | npt.ArrayLike,
-            IDT: int | float | npt.ArrayLike,
-            **kwargs
+        self, T: int | float | npt.ArrayLike, IDT: int | float | npt.ArrayLike, **kwargs
     ) -> list[mpl.lines.Line2D]:
         """Add ignition delay model predictions to the figure.
 
@@ -111,7 +114,7 @@ class IDTFigure:
 
         """
         T = np.asarray(T)
-        ln, = self.ax.plot(1000 / T, IDT, **(self.sim_props | kwargs))
+        (ln,) = self.ax.plot(1000 / T, IDT, **(self.sim_props | kwargs))
 
         self.sim_handles.append(ln)
         self.sim_labels.append(kwargs["label"] if "label" in kwargs else None)
@@ -124,10 +127,12 @@ class IDTFigure:
         [`add_sim`][knightshock.figures.IDTFigure.add_sim].
         """
         return self.ax.legend(
-            handles=[h for h, l in zip(self.sim_handles, self.sim_labels) if l is not None] +
-                    [h for h, l in zip(self.exp_handles, self.exp_labels) if l is not None],
-            labels=[l for l in self.sim_labels if l is not None] +
-                   [l for l in self.exp_labels if l is not None],
+            handles=[
+                h for h, l in zip(self.sim_handles, self.sim_labels) if l is not None
+            ]
+            + [h for h, l in zip(self.exp_handles, self.exp_labels) if l is not None],
+            labels=[l for l in self.sim_labels if l is not None]
+            + [l for l in self.exp_labels if l is not None],
             **kwargs
         )
 
