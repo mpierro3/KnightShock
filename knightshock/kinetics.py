@@ -57,7 +57,7 @@ class Simulation:
 
     def run(
             self,
-            t: float = 10e-3,
+            t: float = 10e-2,
     ):
         """
         Args:
